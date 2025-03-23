@@ -3,6 +3,7 @@ import Main from "./Main/Main";
 import Footer from "./Footer/Footer";
 import api from "../utils/api";
 import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function App() {
@@ -130,19 +131,26 @@ function App() {
         handleAddPlaceSubmit,
       }}
     >
-      <div className="page">
-        <Header />
-        <Main
-          onOpenPopup={handleOpenPopup}
-          onClosePopup={handleClosePopup}
-          popup={popup}
-          cards={cards}
-          onCardLike={handleCardLike}
-          onCardDelete={handleDeleteCard}
-        />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="page">
+              <Header />
+              <Main
+                onOpenPopup={handleOpenPopup}
+                onClosePopup={handleClosePopup}
+                popup={popup}
+                cards={cards}
+                onCardLike={handleCardLike}
+                onCardDelete={handleDeleteCard}
+              />
 
-        <Footer />
-      </div>
+              <Footer />
+            </div>
+          }
+        ></Route>
+      </Routes>
     </CurrentUserContext.Provider>
   );
 }
