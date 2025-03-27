@@ -1,15 +1,63 @@
+import { useEffect, useState } from "react";
+import { Routes, Route, useNavigate } from "react-router";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+
 import Header from "./Header/Header";
 import Main from "./Main/Main";
 import Footer from "./Footer/Footer";
 import api from "../utils/api";
-import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import Register from "./MainRegister/Register";
+import Login from "./MainLogin/Login";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
+
+import * as auth from "../utils/auth";
+import Popup from "./Main/components/Popup/Popup";
 
 function App() {
   const [currentUser, setCurrentUser] = useState();
   const [popup, setPopup] = useState(null);
-  const [cards, setCards] = useState([]); //variável de estado para cards
+  const [cards, setCards] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    handleCheckToken();
+  }, []);
+
+  async function handleCheckToken() {
+    const { token } = localStorage.getItem("jwt");
+    if (!token) {
+      alert("User is not logged");
+      navigate("/signin");
+      return;
+    }
+
+    try {
+      const response = await auth.checkToken(token);
+      if (response.status === 401 || response.status === 400) {
+        navigate("/signin");
+        throw new Error(`Chamada inválida: ${response.status}`);
+      }
+      const data = await response.json();
+      if (!data.data._id || !data.data.email) {
+        handleLogout();
+        throw new Error(`Token inválido: ${data}`);
+      }
+      setIsLoggedIn(true);
+      navigate("/signin");
+    } catch (error) {
+      alert("Erro: login inválido");
+      console.log("ERROR - LOGIN:", error);
+    }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("jwt");
+    setIsLoggedIn(false);
+  }
+
+  // funções abre e fecha popup
 
   function handleOpenPopup(popup) {
     setPopup(popup);
@@ -131,26 +179,59 @@ function App() {
         handleAddPlaceSubmit,
       }}
     >
+      <Header handleLogout={handleLogout} />
       <Routes>
+        {/* Essa é a rota que deve ser envolvida com o protectedroute */}
+
         <Route
           path="/"
           element={
             <div className="page">
-              <Header />
-              <Main
-                onOpenPopup={handleOpenPopup}
-                onClosePopup={handleClosePopup}
-                popup={popup}
-                cards={cards}
-                onCardLike={handleCardLike}
-                onCardDelete={handleDeleteCard}
-              />
-
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <Main
+                  onOpenPopup={handleOpenPopup}
+                  onClosePopup={handleClosePopup}
+                  popup={popup}
+                  cards={cards}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleDeleteCard}
+                />
+              </ProtectedRoute>
               <Footer />
             </div>
           }
-        ></Route>
+        />
+
+        {/* Essa é a rota que deve ser envolvida com o protectedroute */}
+
+        <Route
+          path="/signup"
+          element={
+            <div className="page">
+              <Register onOpenPopup={handleOpenPopup} />
+            </div>
+          }
+        />
+
+        <Route
+          path="/signin"
+          element={
+            <div className="page">
+              <Login
+                setIsLoggedIn={setIsLoggedIn}
+                onOpenPopup={handleOpenPopup}
+              />
+            </div>
+          }
+        />
       </Routes>
+      <div className="janela-popup">
+        {popup && (
+          <Popup onClose={handleClosePopup} title={popup.title}>
+            {popup.children}
+          </Popup>
+        )}
+      </div>
     </CurrentUserContext.Provider>
   );
 }

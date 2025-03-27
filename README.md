@@ -1,7 +1,15 @@
-# Tripleten web_project_around_react
+# Tripleten web_project_around_auth
 
-- Projeto referente a Sprint 13 do curso TripleTen, com o objetivo de colocar em prática novos conhecimentos sobre React + Vite.
+- Projeto referente a Sprint 17 do curso TripleTen, com o objetivo de colocar em prática novos conhecimentos sobre React + Vite.
 - Trata-se de uma página simples de rede social, com a possibilidade de modificar o profile, adicionar mais postagens de foto, curti-las e exclui-las, além de conseguir amplicar as fotografias para melhor visualização.
+
+## Objetivos do projeto
+
+- Implementação de rotas e redirecionamentos: /signup — para registro de usuário; e, /signin — para autorização de usuário
+- Criação de novos componentes React: Login, Register, ProtectedRoute e InfoTooltip
+- Conexão da Funcionalidade Principal do Site ao Back-End do TripleTen
+- Implementar Autenticação de Usuário
+- Implementação do Armazenamento Local e a Manipulação de Token
 
 ## Tecnologias
 
@@ -23,12 +31,3 @@
 
 - Você pode clonar o repositório
 - Abrir os arquivos disponibilizados
-
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh

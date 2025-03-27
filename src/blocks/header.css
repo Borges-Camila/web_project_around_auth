@@ -3,9 +3,32 @@
   max-width: 880px;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+}
+
 .header__logo {
   width: 173px;
   display: flex;
+}
+
+.navbar {
+  display: flex;
+  gap: 56px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 22px;
+  font-family: Inter;
+}
+
+.navbar a {
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  cursor: pointer;
+  opacity: 0.7;
 }
 
 hr {

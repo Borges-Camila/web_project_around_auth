@@ -27,6 +27,20 @@ class Api {
     });
   }
 
+  getUserData(jwt) {
+    return fetch(
+      `https://se-register-api.en.tripleten-services.com/v1/users/me`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    );
+  }
+
   createNewCard(card) {
     return fetch(`${this._baseUrl}/cards`, {
       method: "POST",
