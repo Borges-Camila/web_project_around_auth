@@ -19,7 +19,6 @@ function Login({ setIsLoggedIn, onOpenPopup }) {
         throw new Error(`Chamada inválida: ${response.status}`);
       }
       const data = await response.json();
-      console.log("API Response:", data);
       if (!data?.token) {
         throw new Error(`Token inválida: ${data}`);
       }
