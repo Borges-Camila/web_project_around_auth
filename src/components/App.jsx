@@ -28,7 +28,6 @@ function App() {
   async function handleCheckToken() {
     const { token } = localStorage.getItem("jwt");
     if (!token) {
-      alert("User is not logged");
       navigate("/signin");
       return;
     }
@@ -47,7 +46,6 @@ function App() {
       setIsLoggedIn(true);
       navigate("/signin");
     } catch (error) {
-      alert("Erro: login inválido");
       console.log("ERROR - LOGIN:", error);
     }
   }
