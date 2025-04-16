@@ -42,7 +42,7 @@ function Main({
           onClick={() => onOpenPopup(editAvatarPopup)}
         >
           <img
-            src={currentUser?.avatar}
+            src={currentUser.avatar}
             className="profile__avatar"
             alt="Fotografia de um senhor de cabelos brancos, usando uma touca de cor vermelho vibrante e um camisa azul claro."
           />

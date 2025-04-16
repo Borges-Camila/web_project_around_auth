@@ -4,7 +4,7 @@ import heartButton from "../../../../images/Coração.svg";
 import ImagePopup from "../Popup/components/BigImage/imagePopup";
 
 export default function Card(props) {
-  const { name, link, isLiked } = props.card;
+  const { name, link, isLiked = false } = props.card;
   const { handleOpenPopup } = props;
 
   const imageComponent = {

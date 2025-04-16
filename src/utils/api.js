@@ -1,19 +1,29 @@
+import { getToken } from "./token";
+
 class Api {
-  constructor({ baseUrl, headers }) {
+  constructor({ baseUrl }) {
     this._baseUrl = baseUrl;
-    this._headers = headers;
+  }
+
+  _getHeaders() {
+    const token = getToken();
+    return {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
   }
 
   getUsersInfo() {
     return fetch(`${this._baseUrl}/users/me`, {
-      headers: this._headers,
+      method: "GET",
+      headers: this._getHeaders(),
     });
   }
 
   editProfileInfo({ name, about }) {
     return fetch(`${this._baseUrl}/users/me`, {
       method: "PATCH",
-      headers: this._headers,
+      headers: this._getHeaders(),
       body: JSON.stringify({
         name: name,
         about: about,
@@ -21,30 +31,26 @@ class Api {
     });
   }
 
-  getInitialCards() {
-    return fetch(`${this._baseUrl}/cards`, {
-      headers: this._headers,
+  editAvatarImg({ avatar }) {
+    return fetch(`${this._baseUrl}/users/me/avatar`, {
+      method: "PATCH",
+      headers: this._getHeaders(),
+      body: JSON.stringify({
+        avatar: avatar,
+      }),
     });
   }
 
-  getUserData(jwt) {
-    return fetch(
-      `https://se-register-api.en.tripleten-services.com/v1/users/me`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    );
+  getInitialCards() {
+    return fetch(`${this._baseUrl}/cards`, {
+      headers: this._getHeaders(),
+    });
   }
 
   createNewCard(card) {
     return fetch(`${this._baseUrl}/cards`, {
       method: "POST",
-      headers: this._headers,
+      headers: this._getHeaders(),
       body: JSON.stringify(card),
     });
   }
@@ -52,51 +58,37 @@ class Api {
   deleteCard(cardId) {
     return fetch(`${this._baseUrl}/cards/${cardId}`, {
       method: "DELETE",
-      headers: this._headers,
+      headers: this._getHeaders(),
     });
   }
 
   changeLikeCardStatus(cardId, isLiked) {
     return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
-      method: isLiked === false ? "PUT" : "DELETE",
-      headers: this._headers,
+      method: isLiked ? "PUT" : "DELETE",
+      headers: this._getHeaders(),
     });
   }
 
-  addLikes({ cardId, isLiked }) {
-    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
-      method: "PUT",
-      headers: this._headers,
-      body: JSON.stringify({
-        status: isLiked,
-      }),
-    });
-  }
+  //  addLikes({ cardId, isLiked }) {
+  //   return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
+  //    method: "PUT",
+  //      headers: this._getHeaders(),
+  //    body: JSON.stringify({
+  //    status: isLiked,
+  //   }),
+  //  });
+  // }
 
-  removeLikes(cardId) {
-    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
-      method: "DELETE",
-      headers: this._headers,
-    });
-  }
-
-  editAvatarImg({ avatar }) {
-    return fetch(`${this._baseUrl}/users/me/avatar`, {
-      method: "PATCH",
-      headers: this._headers,
-      body: JSON.stringify({
-        avatar: avatar,
-      }),
-    });
-  }
+  //  removeLikes(cardId) {
+  //  return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
+  //  method: "DELETE",
+  ///     headers: this._getHeaders(),
+  //  });
+  // }
 }
 
 const api = new Api({
-  baseUrl: "https://around-api.pt-br.tripleten-services.com/v1",
-  headers: {
-    authorization: "3aa282d7-9323-433a-907f-6e03563d6d4a",
-    "Content-Type": "application/json",
-  },
+  baseUrl: "http://localhost:3001",
 });
 
 export default api;

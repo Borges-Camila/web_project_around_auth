@@ -12,13 +12,13 @@ import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 
 import * as auth from "../utils/auth";
 import Popup from "./Main/components/Popup/Popup";
+import { getToken } from "../utils/token";
 
 function App() {
   const [currentUser, setCurrentUser] = useState();
   const [popup, setPopup] = useState(null);
   const [cards, setCards] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +26,7 @@ function App() {
   }, []);
 
   async function handleCheckToken() {
-    const { token } = localStorage.getItem("jwt");
+    const { token } = getToken();
     if (!token) {
       navigate("/signin");
       return;
@@ -43,8 +43,19 @@ function App() {
         handleLogout();
         throw new Error(`Token inválido: ${data}`);
       }
+
+      const userData = await api.getUsersInfo();
+
+      const cardsData = await api.getInitialCards();
+      setCurrentUser(userData);
+      setCards(
+        (cardsData || []).map((card) => ({
+          ...card,
+          isLiked: card.likes.includes(userData._id),
+        }))
+      );
       setIsLoggedIn(true);
-      navigate("/signin");
+      navigate(location.state?.from || "/");
     } catch (error) {
       console.log("ERROR - LOGIN:", error);
     }
@@ -65,7 +76,7 @@ function App() {
     setPopup(null);
   }
 
-  // função para oegar infos usurário
+  // função para pegar infos usurário
   async function getUserInfo() {
     await api
       .getUsersInfo()
@@ -127,23 +138,28 @@ function App() {
       .getInitialCards()
       .then((res) => res.json())
       .then((cards) => {
-        setCards(cards);
+        console.log("Cards recebidos:", cards);
+        cards.map((card) => ({
+          ...card,
+          isLiked: card.likes.includes(currentUser?._id),
+        }));
       })
       .catch((error) => {
-        console.log("Error get", error);
+        console.log("Erro ao buscar cards:", error.message || error);
       });
   }, []);
 
   // Função de dar like nos cartões
   async function handleCardLike(card) {
     // Verificar mais uma vez se esse cartão já foi curtido
-    const isLiked = card.isLiked;
+    const isLiked = card.likes.some((id) => id === currentUser._id);
 
     // Enviar uma solicitação para a API e obter os dados do cartão atualizados
     await api
-      .changeLikeCardStatus(card._id, isLiked)
+      .changeLikeCardStatus(card._id, !isLiked)
       .then((response) => response.json())
       .then((newCard) => {
+        newCard.isLiked = newCard.likes.includes(currentUser._id);
         setCards((state) =>
           state.map((currentCard) =>
             currentCard._id === card._id ? newCard : currentCard
@@ -172,6 +188,7 @@ function App() {
     <CurrentUserContext.Provider
       value={{
         currentUser,
+        setCurrentUser,
         handleUpdateUser,
         handleUpdateAvatar,
         handleAddPlaceSubmit,

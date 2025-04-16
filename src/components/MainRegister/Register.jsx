@@ -18,7 +18,8 @@ function Register({ onOpenPopup }) {
         throw new Error(`Chamada inválida: ${response.status}`);
       }
       const info = await response.json();
-      if (!info.data._id || !info.data.email) {
+
+      if (!info._id || !info.email) {
         throw new Error(`Id não recebido: ${info}`);
       }
       onOpenPopup({

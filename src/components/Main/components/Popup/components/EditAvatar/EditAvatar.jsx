@@ -8,8 +8,6 @@ export default function EditAvatar() {
   const [avatar, setAvatar] = useState(currentUser.avatar);
   const inputAvatar = useRef();
 
-  console.log(avatar);
-
   const handleAvatarChange = (event) => {
     setAvatar(event.target.value);
   };
